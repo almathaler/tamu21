@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="form.css">
+    <title>IceToMeetYou Trivia | Tell Us About Yourself!</title>
+  </head>
+  <body>
+    <h1>Tell Us About Yourself!</h1>
+    <h2>Your Responses Will Be Your Clues -- Your New Acquaintances Will Have To Deduce They're Yours!</h2>
+      <form action="!!" method="GET"> <!-- action is the uri of what's waiting for the info/can process it  -->
+        <div class="form">
+          <label for="name">What's Your Name?</label>
+          <input id="name" type="text" placeholder="Joann Smith" name="name" required autofocus>
+          <br>
+          <label for="major">What's Your Major?   </label>
+          <input id="major" type="text" placeholder="Entomology" name="major" required>
+          <br>
+          <label for="from">Where Are You From?</label>
+          <input id="from" type="text" placeholder="Staten Island, NY" name="from" required>
+          <br>
+          <label for="movie">You're Favorite Movie:</label>
+          <input id="movie" type="text" placeholder="Home Alone 2" name="movie" required>
+          <br>
+          <label for="grade">What Year Are You?</label>
+          <select name="grade" id="grade">
+            <option value="fresh">Freshman</option>
+            <option value="soph">Sophomore</option>
+            <option value = "junior">Junior</option>
+            <option value="senior">Senior</option>
+          </select>
+        </div>
+        <button class="submit" id="submit">Take Me To The Game!</a>
+      </form>
+  </body>
+</html>
