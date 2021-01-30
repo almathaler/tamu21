@@ -1,5 +1,41 @@
 html, body {
   background-color: white;
+  font-family: Arial, Helvetica, sans-serif;
   margin: 0;
   padding: 0;
+}
+
+.game {
+  background-color: #bbf;
+  width: 90%;
+  margin: 20px auto;
+  padding: 10px 10px;
+  overflow: hidden;
+}
+
+.game .game_desc {
+  float: left;
+  margin: 0;
+  max-width: 45%;
+  padding: 10px 10px;
+}
+
+.game .game_desc h3 {
+  margin: 0;
+  padding: 0;
+}
+
+.game .game_desc button {
+  margin: 10px 5px;
+  padding: 5px 10px;
+  font-size: 20px;
+  background-color: #f00;
+  border: none;
+  color: white;
+  text-decoration: none;
+  transition: background-color 0.4s;
+}
+
+.game .game_desc button:hover {
+  background-color: #f66;
 }
