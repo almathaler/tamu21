@@ -1,5 +1,5 @@
 html, body {
-  text-size: 26px;
+  font-size: 24px;
   background-color: white;
   text-align: center;
   font-family: Arial, Helvetica, sans-serif;
@@ -36,6 +36,34 @@ h2 {
 
 .form .input{
   float: left;
+}
+
+.avatar_selector{
+    width: 80%;
+    margin: 20px auto;
+}
+
+.avatar_selector img{
+  max-width:30%;
+  height: auto;
+  opacity: 60%;
+}
+
+.avatar_selector img:hover{
+  opacity:100%;
+}
+
+
+#sloth {
+    display: none;
+}
+
+#zebra{
+  display: none;
+}
+
+#penguin{
+  display: none;
 }
 
 .submit{

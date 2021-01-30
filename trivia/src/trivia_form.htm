@@ -32,6 +32,34 @@
             <option value="senior">Senior</option>
           </select>
         </div>
+        <br>
+        <div class="avatar_selector">
+          <h2>Choose Your Avatar</h2>
+            <input type="radio" name="avatar" value="sloth" id="sloth"/>
+            <label for="sloth"><img src="sloth.png" alt="sloth" onclick="makeOpaque(this)" id="sloth_pic"/></label>
+
+            <input type="radio" name="avatar" value="zebra" id="zebra" />
+            <label for="zebra"><img src="zebra.png" alt="zebra" onclick="makeOpaque(this)" id="zebra_pic"/></label>
+
+
+            <input type="radio" name="avatar" value="penguin" id="penguin" />
+            <label for="penguin"><img src="penguin.png" alt="penguin" onclick="makeOpaque(this)" id="penguin_pic"/></label>
+
+          <script language = "javascript">
+            function makeOpaque(image){
+              if (image.style.opacity == '1'){
+                image.style.opacity = '.6';
+              }else{ //image wasn't opaque, so we should make what was previously selected light again
+                //j go and make everything 60%?.well One of these will be redundant oh 
+                document.getElementById('sloth_pic').style.opacity = '.6';
+                document.getElementById('zebra_pic').style.opacity = '.6';
+                document.getElementById('penguin_pic').style.opacity = '.6';
+                image.style.opacity = '1';
+              }
+            }
+          </script>
+        </div>
+        <br>
         <button class="submit" id="submit">Take Me To The Game!</a>
       </form>
   </body>
