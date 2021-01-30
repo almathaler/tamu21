@@ -18,11 +18,43 @@
 				padding: 10px 10px;
 				color: #555;
 			}
+
+			#join_game {
+				margin: 20px auto;
+				padding: 10px 10px;
+				text-align: center;
+				width: 20%;
+				border: 1px solid black;
+				border-radius: 5px;
+			}
+
+			#join_game #gameCode {
+				font-size: 24px;
+				width: 50%;
+			}
+
+			#join_game input[type="submit"] {
+				background-color: red;
+				border: none;
+				color: white;
+				font-size: 24px;
+			}
 		</style>
+		<script>
+			function createGameCode(game) {
+
+			}
+		</script>
 	</head>
 	<body>
 		<h1><em>Ice</em> to meet you!</h1>
 		<h2>Fun games and icebreakers perfect for getting to know your classmates</h2>
+
+		<form id="join_game">
+			<input type="text" id="gameCode" name="gameCode"></input>
+			<input type="submit" value="Join Game"></input>
+		</form>
+
 		<div class="game">
 			<div class="game_desc">
 				<h3>Testing Game</h3>
@@ -31,25 +63,23 @@
 				</p>
 				<button class="create_new" id="game1">Create new game</a>
 			</div>
-
 		</div>
 
 		<div class="game">
 			<div class="game_desc">
-				<h3>Testing Game #2</h3>
+				<h3>Testing Game 2</h3>
 				<p>
-					Testing game description again
+					Testing game description
 				</p>
 				<button class="create_new" id="game2">Create new game</a>
 			</div>
-
 		</div>
 
 		<div class="game">
 			<div class="game_desc">
-				<h3>Testing Game #3</h3>
+				<h3>Testing Game 3</h3>
 				<p>
-					Testing game description again and again
+					Testing game description
 				</p>
 				<button class="create_new" id="game3">Create new game</a>
 			</div>
