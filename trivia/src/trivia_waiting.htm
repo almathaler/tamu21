@@ -8,60 +8,89 @@
     <title>IceToMeetYou Trivia | Waiting...</title>
   </head>
   <body>
-    <div class="submitted">
-      <h1 id="thx"></h1><br>
-      <h2>Waiting for your compatriots...</h2><br>
-      <img src="zebra.png" id="avatar_pic"/>
+    <div class="waiting" id="waiting">
+      <div class="submitted">
+        <h1 id="thx"></h1><br>
+        <h2>Waiting for your compatriots...</h2><br>
+        <img src="zebra.png" id="avatar_pic"/>
+      </div>
+      <!-- scrapes form info from url -->
+      <script>
+        const queryString = window.location.search;
+        console.log(queryString);
+
+        const urlParams = new URLSearchParams(queryString);
+        const name = urlParams.get('name')
+        console.log(name);
+        document.getElementById('thx').innerHTML = "Thank you, " + name + "!";
+
+        const major = urlParams.get('major')
+        console.log(major);
+
+        const from = urlParams.get('from')
+        console.log(from);
+
+        const movie = urlParams.get('movie')
+        console.log(movie);
+
+        const grade = urlParams.get('grade')
+        console.log(grade);
+
+        const avatar = urlParams.get('avatar')
+        console.log(avatar);
+        if (avatar.valueOf() == "sloth"){
+          document.getElementById('avatar_pic').src = "sloth.png";
+        }
+        if (avatar.valueOf() == "penguin"){
+          document.getElementById('avatar_pic').src = "penguin.png";
+        }
+
+
+      </script>
+      <div class="start_game">
+        <form name="start_game" method="GET" action="trivia_game.htm">
+          <button class="submit" id="submit">Everyone's Here!</a>
+        </form>
+      </div>
+      <div class="joiners" id="joiners">
+      </div>
     </div>
-    <!-- scrapes form info from url -->
-    <script>
-      const queryString = window.location.search;
-      console.log(queryString);
-
-      const urlParams = new URLSearchParams(queryString);
-      const name = urlParams.get('name')
-      console.log(name);
-      document.getElementById('thx').innerHTML = "Thank you, " + name + "!";
-
-      const major = urlParams.get('major')
-      console.log(major);
-
-      const from = urlParams.get('from')
-      console.log(from);
-
-      const movie = urlParams.get('movie')
-      console.log(movie);
-
-      const grade = urlParams.get('grade')
-      console.log(grade);
-
-      const avatar = urlParams.get('avatar')
-      console.log(avatar);
-      if (avatar.valueOf() == "sloth"){
-        document.getElementById('avatar_pic').src = "sloth.png";
-      }
-      if (avatar.valueOf() == "penguin"){
-        document.getElementById('avatar_pic').src = "penguin.png";
-      }
-
-
-    </script>
-    <div class="start_game">
-      <form name="start_game" method="GET" action="trivia_game.htm">
-        <button class="submit" id="submit">Everyone's Here!</a>
-      </form>
-    </div>
-    <div class="joiners" id="joiners">
+    <div class="game" id="game">
     </div>
   </body>
   <!-- pubnub stuff. No messages, just presence -->
   <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.27.4.min.js"></script>
 
   <script>
+    //in this script, scrape data from url and add to array in JS?
+    //once they press "start", display the game. Take note of how many players
+    //when they press start -- don't add questions from new add-ons (though that shouldn't be a problem idt)
+    //set the waiting div to display:none and instead put on the game?
+    let names = [];
+    let majors = [];
+    let froms = [];
+    let grades = [];
+    let movies = [];
+    let avatars = [];
+
+    let host = false;
+
     const messagesTop = document.getElementById('joiners');
 
-    const clientUUID = PubNub.generateUUID();
-    const theChannel = 'the_guide';
+    function findUUID() {//checks if comp already has uuid
+      var uuid = localStorage.getItem('user_uuid');
+      if (uuid === null) {
+        uuid = PubNub.generateUUID();
+        console.log("set uuid", uuid);
+        localStorage.setItem('user_uuid', uuid);
+      }else{
+        console.log("uuid already set");
+      }
+      return uuid;
+    }
+
+    const clientUUID = findUUID();
+    const theChannel = 'the_guide5';
     const theEntry = 'Earth';
 
     const pubnub = new PubNub({
@@ -73,12 +102,33 @@
 
     pubnub.addListener({
       message: function(event) {
+        console.log("recieved a message");
+        if (event.message.entry.valueOf() == "display"){
           displayMessage('[NAME: recieved]', event.message.update);
+        }else if (event.message.entry.valueOf() == "info" && host && !names.includes(event.message.name)){
+          let nameLen = names.push(event.message.name);
+          let majorLen = majors.push(event.message.major);
+          let fromLen = froms.push(event.message.from);
+          let gradeLen = grades.push(event.message.grade);
+          let movieLen = movies.push(event.message.movie);
+          let avatarLen = avatars.push(event.message.avatar);
+          console.log("updated arrays")
+          console.log("values: ", names[nameLen-1], majors[majorLen-1], froms[fromLen-1]);
+        }
       },
       presence: function(event) {
+        console.log("presence.event: ",event.action);
+        if (event.occupancy == 1){
+          host = true;
+        }
+        console.log("host? ", host);
+        console.log("occupancy: " + event.occupancy);
         const urlParams = new URLSearchParams(queryString);
         const name = urlParams.get('name')
-        submitName("test", name.valueOf());
+        if (event.action === 'join'){
+          submitName("display", name.valueOf());
+          submitInfo("info", name.valueOf(), urlParams.get('major').valueOf(), urlParams.get('grade').valueOf(), urlParams.get('from').valueOf(), urlParams.get('movie').valueOf(), urlParams.get('avatar').valueOf()); //
+        }
       },
 
     });
@@ -97,12 +147,22 @@
         if (status.error) {
           console.log(status)
         }
-        // else {
-        //   displayMessage('[NAME: sent]',
-        //     'timetoken: ' + response.timetoken);
-        // }
       });
     };
+
+    submitInfo = function(anEntry, name, major, grade, from, movie, avatar){
+      pubnub.publish({
+        channel : theChannel,
+        message : {'entry' : anEntry, 'name' : name, 'major': major, 'grade':grade, 'from':from, 'movie':movie, 'avatar':avatar}
+      },
+      function(status, response) {
+        if (status.error) {
+          console.log(status)
+        }else {
+          console.log("published message with: " +name+ ", " + major + ", " + grade + ", " + from + ", " + movie + ", " + avatar);
+        }
+      });
+    }
 
     displayMessage = function(messageType, aMessage) {
       let pmessage = document.createElement('p');
