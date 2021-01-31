@@ -1,5 +1,5 @@
-const CHAT_CHANNEL = "chat_test5";
-const CONTROL_CHANNEL = "control_test5";
+const CHAT_CHANNEL = "chat_test6";
+const CONTROL_CHANNEL = "control_test6";
 const UUID_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const numPlayersText = document.getElementById("numPlayers");
 var messagesTop = document.getElementById("last_message");
@@ -8,10 +8,12 @@ var playerNum = 0;
 var isHost = false;
 var playerName;
 var numPlayers = 0;
+var alertedPresence = false;
+var joined = false;
+var startReactButtons = false;
 
 var url_string = window.location.href;
 var url = new URL(url_string);
-
 
 function checkIfStarted() {//returns false if doesn't match last game, or no name
   var ret = true;
@@ -38,12 +40,27 @@ function init() {
   if (checkIfStarted()) {
     removeJoin();
     joinChat();
-    alert(playerName + " has joined the room");//wont already have alert
+    if (!alertedPresence) {
+      alert(playerName + " has joined the room");//wont already have alert
+      alertedPresence = true;
+    }
+
     pubnub.hereNow({
       channels: [CHAT_CHANNEL]
     }, function (status, response) {
+      //console.log(stat)
+      //if (status.error) {
+        console.log(status, response);
+      //}
       numPlayers = response.totalOccupancy;
       updateNumPLayers();
+      if (!joined) {
+        if (numPlayers === 1 && playerNum === 0) {
+          isHost = true;
+        }
+        startReactButtons = true;
+        //window.board.startButtons();
+      }
     });
   }
 }
@@ -66,7 +83,9 @@ function joinButton(nameInput) {
     localStorage.setItem('chat_name', playerName);
     nameInput.value = "";
 
+    removeJoin();
     joinChat();
+    initReact();
 }
 
 function joinChat() {
@@ -79,26 +98,32 @@ function joinChat() {
   pubnub.addListener({
       status: function(statusEvent) {
           if (statusEvent.category === "PNConnectedCategory") {
-            pubnub.hereNow({
+            /*pubnub.hereNow({
               channels: [CHAT_CHANNEL],
               includeState: true
             }, function (status, response) {
               console.log(status, response);
-            });
+            });*/
           }
       },
       presence: function(response) {//assigns player numbers and host
           if (response.action === 'join') {
             if (playerNum === 0) {//first time joining
+              joined = true;
               if (response.occupancy < 2) {//first in room
                 isHost = true;
                 playerNum = 1;
               } else {
                   playerNum = response.occupancy;
               }
+              if (!alertedPresence) {
                 alert(playerName + " has joined the room");
+                alertedPresence = true;
+              }
+              window.board.startButtons();
             }
           }
+          console.log(response.action);
 
           numPlayers = response.occupancy;
           updateNumPLayers();
@@ -116,6 +141,9 @@ function joinChat() {
           printMessage(msg);
         } else if (msg.type === "alert_message") {
           printAlertMessage(msg);
+        } else {
+          console.log(msg.type);
+          interpretMessage(response);
         }
       }
   })

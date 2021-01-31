@@ -3,6 +3,7 @@
   padding: 10px 10px;
   width: fit-content;
   border: 1px solid black;
+  float: right;
 }
 
 #chat #messages {
