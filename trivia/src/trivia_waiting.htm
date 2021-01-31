@@ -54,8 +54,12 @@
       </div>
     </div>
     <div class="game" id="game">
-      <button id="next_question" onclick = "submitAnswers()">Host, I'm Done!</a><br>
+      <button id="next_question" onclick = "submitAnswers()">Host, I'm Done!</a>
+      <br>
     </div>
+      <div class = "questions" id="questions">
+      </div>
+
   </body>
   <!-- pubnub stuff. No messages, just presence -->
   <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.27.4.min.js"></script>
@@ -76,7 +80,7 @@
 
     const messagesTop = document.getElementById('joiners');
 
-    const theChannel = 'new917';
+    const theChannel = 'new10787831';
     const theEntry = 'Earth';
 
     function findUUID() {//checks if comp already has uuid
@@ -129,15 +133,15 @@
           //change visibility of DIVS
           console.log("recieved hostStart, am I host? ", host);
           document.getElementById('waiting').style.display = "none";
-          document.getElementById('game').style.display = "initial";
           // document.getElementById('game').innerHTML = "<p>testing</p>";
           //now sendQuestions. when was in hostStart function host wasn't updating?
           console.log("attempting t osend questions...");
           sendQuestions(names.length * 2);
+          document.getElementById('game').style.display = "initial";
         }else if (event.message.entry.valueOf() == "question"){
           console.log("recieved question: " + event.message.question + ", answer: " + event.message.answer);
           answers.push(event.message.answer);//will be in order they were recieved
-          document.getElementById('game').innerHTML+="<label for=\"q"+numQ+"\">"+event.message.question+"</label><input id=\"q"+numQ+"\" type=\"text\" name=\"q"+numQ+"\" required><br>";
+          document.getElementById('questions').innerHTML+="<br><label for=\"q"+numQ+"\">"+event.message.question+"</label><input id=\"q"+numQ+"\" type=\"text\" name=\"q"+numQ+"\" required><br><br>";
           numQ+=1;
         }else if (event.message.entry.valueOf() == "response" && host){
           numResponses+=1;
@@ -155,11 +159,21 @@
               }
             }
             let winner = responses[maxIndex];
-            notifyOfWinner(winner);
+            //find winner and put their avatar at bottom
+            let nameOfWinner = winner.split("-")[1];
+            var avatar = "zebra";
+            for (x = 0; x<names.length; x++){
+              if (names[x].valueOf() == nameOfWinner){
+                avatar = avatars[x];
+              }
+            }
+            notifyOfWinner(winner, avatar);
           }
         }else if (event.message.entry.valueOf() == "winner"){
             console.log("recieved message of winner: " + event.message.winner);
-            document.getElementById('game').innerHTML = "<p>Congrats to our winner, " + event.message.winner + "!</p>";
+            document.getElementById('questions').style.display = "none";
+            document.getElementById('game').innerHTML = "<div class = \"winner\" id = \"winner\"><h1>Congrats to our winner, " + event.message.winner + "!</h1><br><img src=\""+event.message.avatar+".png\" id=\"avatar_pic\"/></div>";
+            //<img src="zebra.png" id="avatar_pic"/>
         }
       },
       presence: function(event) {
@@ -210,11 +224,11 @@
       }
     };
 
-    notifyOfWinner = function(winner){
+    notifyOfWinner = function(winner, avatar){
       console.log("notifying of winner: " + winner);
       pubnub.publish({
         channel : theChannel,
-        message : {'entry' : "winner", 'winner': winner}
+        message : {'entry' : "winner", 'winner': winner, 'avatar': avatar}
       },
       function(status, response) {
         if (status.error) {

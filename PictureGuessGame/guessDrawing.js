@@ -13,7 +13,7 @@ function gameStart(pubnubGuessGame, game, player){
 
 
     let clearCanvasButton = $('clearCanvasButton'), colorSwatch = $('colorSwatch'), 
-    guessPhrase = $('guessWord'), switchy = $('switchy');
+    guessPhrase = $('guessWord'), switchy = $('switchy'), newWord = $('new-word');
 
     let gameListener = {
         message: function(msg) {
@@ -196,6 +196,8 @@ function gameStart(pubnubGuessGame, game, player){
             clearTheCanvas: clearTheCanvas
         })
     }
+
+    newWord.addEventListener("click", startGame, false);
 
     let turnCount = 0;
 
