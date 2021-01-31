@@ -77,21 +77,26 @@
 
     const messagesTop = document.getElementById('joiners');
 
+    const theChannel = 'new120';
+    const theEntry = 'Earth';
+
     function findUUID() {//checks if comp already has uuid
       var uuid = localStorage.getItem('user_uuid');
-      if (uuid === null) {
+      var channel = localStorage.getItem('channel');
+      if (uuid === null || channel === null || channel.valueOf() != theChannel.valueOf()) {
         uuid = PubNub.generateUUID();
         console.log("set uuid", uuid);
         localStorage.setItem('user_uuid', uuid);
+        localStorage.setItem('channel', theChannel)
       }else{
-        console.log("uuid already set");
+        console.log("uuid already set: ", uuid);
       }
       return uuid;
     }
 
+
     const clientUUID = findUUID();
-    const theChannel = 'the_guide5';
-    const theEntry = 'Earth';
+
 
     const pubnub = new PubNub({
       // replace the following with your own publish and subscribe keys
@@ -103,7 +108,7 @@
     pubnub.addListener({
       message: function(event) {
         console.log("recieved a message");
-        if (event.message.entry.valueOf() == "display"){
+        if (event.message.entry.valueOf() == "display" && !names.includes(event.message.update)){
           displayMessage('[NAME: recieved]', event.message.update);
         }else if (event.message.entry.valueOf() == "info" && host && !names.includes(event.message.name)){
           let nameLen = names.push(event.message.name);
@@ -126,6 +131,7 @@
         const urlParams = new URLSearchParams(queryString);
         const name = urlParams.get('name')
         if (event.action === 'join'){
+          console.log("presence.event is join, submitting name and info: ");
           submitName("display", name.valueOf());
           submitInfo("info", name.valueOf(), urlParams.get('major').valueOf(), urlParams.get('grade').valueOf(), urlParams.get('from').valueOf(), urlParams.get('movie').valueOf(), urlParams.get('avatar').valueOf()); //
         }
@@ -134,7 +140,7 @@
     });
 
     pubnub.subscribe({
-      channels: ['the_guide'],
+      channels: [theChannel],
       withPresence: true
     });
 
@@ -146,6 +152,8 @@
       function(status, response) {
         if (status.error) {
           console.log(status)
+        }else{
+          console.log("published name");
         }
       });
     };
