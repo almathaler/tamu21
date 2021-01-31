@@ -1,10 +1,12 @@
 'use strict';
 
-const GAME_CHANNEL = "game_test";
-var numAnswers = 0;
-var numPeople = 0;
+const GAME_CHANNEL = "game1";
+var numAnswers = 3;
+var numPeople = 5;
 var myAnswers = [];
-var allAnswers = [];//organized by question, then person
+var allAnswers = [["Anthony", "Brittany", "Carlos", "Diego", "Elma"],
+["English", "PolSci", "ComSci", "Physics", "Math"],
+["Read", "Daydream", "Fix bugs", "Suffer", "Think"]];//organized by question, then person
 var matches;
 
 if (startReactButtons) {
@@ -12,15 +14,14 @@ if (startReactButtons) {
 }
 
 function initReact() {
-  console.log(1);
   setUpPubnub();
-  numAnswers = parseInt(url.searchParams.get("numQs"));//finds answers to questions
+  /*numAnswers = parseInt(url.searchParams.get("numQs"));//finds answers to questions
   for (var i = 1; i <= numAnswers; i++) {
     myAnswers.push(url.searchParams.get("q"+i));
     allAnswers.push([]);
   }
-  console.log(2);
-  sendAnswers(myAnswers);
+  sendAnswers(myAnswers);*/
+  window.board.startButtons();
 }
 
 
@@ -108,6 +109,8 @@ class MatchBoard extends React.Component {
       button_display: "none"
     };
 
+    fillMatches();
+
     if (startReactButtons) {
       this.state.button_display = "block";
     }
@@ -168,7 +171,7 @@ class MatchBoard extends React.Component {
   }
 
   start(self) {
-    fillMatches();
+    //fillMatches();
     self.state.display = "block";
     self.state.button_display = "none";
     self.setState({ state: self.state });

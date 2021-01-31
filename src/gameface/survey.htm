@@ -5,11 +5,37 @@
     <title>Game Face</title>
     <link rel="stylesheet" href="../style.css">
     <style>
+      form {
+        margin: 10px auto;
+        padding: 10px 10px;
+        width: fit-content;
+        background-color: #bbf;
+        font-size: 16px
+      }
+
+      form input[type="submit"] {
+        background-color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        margin: 5px auto;
+        font-size: 18px;
+      }
+
+      form input[type="text"] {
+        font-size: 18px;
+        text-align: center;
+      }
+
+      h3 {
+        margin: 10px 10px;
+        text-align: center;
+      }
     </style>
 </head>
 <body>
   <h3>Fill out this short form so your classmates can learn about you</h3>
-  <form action="reactTest.htm">
+  <form action="index.htm">
     <input type="hidden" name="game" id="game">
     <input type="hidden" name="numQs" value="3">
     <label for="q1">Your actual name</label><br>
