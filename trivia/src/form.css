@@ -66,7 +66,26 @@ h2 {
 .submitted img{
   max-width: 30%;
   height: auto;
+  animation: shake 1s linear 0s infinite alternate;
+  will-change: transform;
+  transform-origin: bottom center;
 }
+
+/*Got this from tutorial @ https://www.outsystems.com/blog/posts/from-design-to-code_creating-and-animating-images-with-css/*/
+
+@keyframes shake {
+  0% {
+    transform: rotate(-1deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(1deg);
+  }
+}
+
+
 
 #sloth {
   display: none;
