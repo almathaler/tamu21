@@ -1,5 +1,5 @@
-const CHAT_CHANNEL = "chat_test6";
-const CONTROL_CHANNEL = "control_test6";
+const CHAT_CHANNEL = "chat1";
+const CONTROL_CHANNEL = "control1";
 const UUID_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const numPlayersText = document.getElementById("numPlayers");
 var messagesTop = document.getElementById("last_message");
@@ -85,6 +85,10 @@ function joinButton(nameInput) {
 
     removeJoin();
     joinChat();
+    if (!alertedPresence) {
+      alert(playerName + " has joined the room");//wont already have alert
+      alertedPresence = true;
+    }
     initReact();
 }
 
@@ -143,7 +147,7 @@ function joinChat() {
           printAlertMessage(msg);
         } else {
           console.log(msg.type);
-          interpretMessage(response);
+          //interpretMessage(response);
         }
       }
   })

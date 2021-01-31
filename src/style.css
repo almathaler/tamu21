@@ -25,7 +25,7 @@ html, body {
   padding: 0;
 }
 
-.game .game_desc button {
+.game .game_desc a {
   margin: 10px 5px;
   padding: 5px 10px;
   font-size: 20px;
@@ -36,8 +36,8 @@ html, body {
   transition: background-color 0.4s;
 }
 
-.game .game_desc button:hover {
-  background-color: #f66;
+.game .game_desc a:hover {
+  background-color: #f88;
   cursor: pointer;
 }
 

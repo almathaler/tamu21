@@ -54,7 +54,7 @@
       </div>
     </div>
     <div class="game" id="game">
-      <button id="next_question" onclick = "onClickNextQ()">Host, I'm Done!</a><br>
+      <button id="next_question" onclick = "submitAnswers()">Host, I'm Done!</a><br>
     </div>
   </body>
   <!-- pubnub stuff. No messages, just presence -->
@@ -76,7 +76,7 @@
 
     const messagesTop = document.getElementById('joiners');
 
-    const theChannel = 'new504';
+    const theChannel = 'new917';
     const theEntry = 'Earth';
 
     function findUUID() {//checks if comp already has uuid
@@ -105,6 +105,11 @@
     });
 
     let numQ = 0; //number of questions recieved thus far
+    let numResponses = 0; //for host when recieving submitted answers
+    let users = 0;
+    let responses = [];
+    let scores = [];
+    let answers = [];
 
     pubnub.addListener({ //4 types of messages: name, info, hostStart and question
       message: function(event) {
@@ -131,7 +136,30 @@
           sendQuestions(names.length * 2);
         }else if (event.message.entry.valueOf() == "question"){
           console.log("recieved question: " + event.message.question + ", answer: " + event.message.answer);
+          answers.push(event.message.answer);//will be in order they were recieved
           document.getElementById('game').innerHTML+="<label for=\"q"+numQ+"\">"+event.message.question+"</label><input id=\"q"+numQ+"\" type=\"text\" name=\"q"+numQ+"\" required><br>";
+          numQ+=1;
+        }else if (event.message.entry.valueOf() == "response" && host){
+          numResponses+=1;
+          scores.push(event.message.score);
+          responses.push(event.message.score + " - " + event.message.name); //same index
+          if (numResponses === names.length){
+            //let winner = Math.max.apply(null, responses); //got from stack overflow
+            //send message about winner
+            let maxIndex = 0;
+            let max = 0;
+            for (x = 0; x<scores.length; x++){
+              if (parseInt(scores[x]) > max){
+                max = parseInt(scores[x]);
+                maxIndex = x;
+              }
+            }
+            let winner = responses[maxIndex];
+            notifyOfWinner(winner);
+          }
+        }else if (event.message.entry.valueOf() == "winner"){
+            console.log("recieved message of winner: " + event.message.winner);
+            document.getElementById('game').innerHTML = "<p>Congrats to our winner, " + event.message.winner + "!</p>";
         }
       },
       presence: function(event) {
@@ -143,7 +171,11 @@
         console.log("occupancy: " + event.occupancy);
         const urlParams = new URLSearchParams(queryString);
         const name = urlParams.get('name')
+        if (event.action === 'join' && host){
+          users+=1;
+        }
         if (event.action === 'join'){
+          console.log("users: " + users);
           console.log("presence.event is join, submitting name and info: ");
           submitName("display", name.valueOf());
           submitInfo("info", name.valueOf(), urlParams.get('major').valueOf(), urlParams.get('grade').valueOf(), urlParams.get('from').valueOf(), urlParams.get('movie').valueOf(), urlParams.get('avatar').valueOf()); //
@@ -178,9 +210,50 @@
       }
     };
 
+    notifyOfWinner = function(winner){
+      console.log("notifying of winner: " + winner);
+      pubnub.publish({
+        channel : theChannel,
+        message : {'entry' : "winner", 'winner': winner}
+      },
+      function(status, response) {
+        if (status.error) {
+          console.log(status);
+        }else{
+          console.log("submitted that the winner is: " + winner);
+        }
+      });
+    }
+
     //submits answers to host; once host has all answers, will notify the winner.
-    submit = function(){
-      //
+    submitAnswers = function(){
+      console.log("submitting answers...");
+      //see how many you got right
+      //send that # in message
+      //host will recieve that message
+      //once all scores recieved, sends "winner" message
+      let score = 0;
+      for (i = 0; i<numQ; i++){
+        let id = "q"+i;
+        if (answers[i].valueOf() == document.getElementById(id).value.valueOf()){
+          score += 1;
+        }
+      }
+      //score = score / numQ;
+      console.log("score: " + score);
+      const urlParams = new URLSearchParams(queryString);
+      const name = urlParams.get('name')
+      pubnub.publish({
+        channel : theChannel,
+        message : {'entry' : "response", 'name' : name, 'score' : score}
+      },
+      function(status, response) {
+        if (status.error) {
+          console.log(status);
+        }else{
+          console.log("submitted response from: ", name, " of, ", score);
+        }
+      });
     }
 
     // let nextQuestion = false;
