@@ -13,6 +13,7 @@
       <h2>Waiting for your compatriots...</h2><br>
       <img src="zebra.png" id="avatar_pic"/>
     </div>
+    <!-- scrapes form info from url -->
     <script>
       const queryString = window.location.search;
       console.log(queryString);
@@ -37,15 +38,75 @@
       const avatar = urlParams.get('avatar')
       console.log(avatar);
       if (avatar.valueOf() == "sloth"){
-        document.getElementByID('avatar_pic').src = "sloth.png";
+        document.getElementById('avatar_pic').src = "sloth.png";
       }
       if (avatar.valueOf() == "penguin"){
-        document.getElementByID('avatar_pic').src = "penguin.png";
+        document.getElementById('avatar_pic').src = "penguin.png";
       }
 
 
     </script>
-    <div class="joiners">
+    <div class="joiners" id="joiners">
     </div>
   </body>
+  <!-- pubnub stuff. No messages, just presence -->
+  <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.27.4.min.js"></script>
+
+  <script>
+    const messagesTop = document.getElementById('joiners');
+
+    const clientUUID = PubNub.generateUUID();
+    const theChannel = 'the_guide';
+    const theEntry = 'Earth';
+
+    const pubnub = new PubNub({
+      // replace the following with your own publish and subscribe keys
+      publishKey: 'pub-c-460f7f1a-94c8-4637-a61a-73822f90499b',
+      subscribeKey: 'sub-c-79b78544-636e-11eb-921d-66294e2030b5',
+      uuid: clientUUID
+    });
+
+    pubnub.addListener({
+      message: function(event) {
+          displayMessage('[NAME: recieved]', event.message.entry + ': ' + event.message.update);
+      },
+      presence: function(event) {
+        const urlParams = new URLSearchParams(queryString);
+        const name = urlParams.get('name')
+        submitName("test", name.valueOf());
+      },
+
+    });
+
+    pubnub.subscribe({
+      channels: ['the_guide'],
+      withPresence: true
+    });
+
+    submitName = function(anEntry, aName) {
+      pubnub.publish({
+        channel : theChannel,
+        message : {'entry' : anEntry, 'update' : aName}
+      },
+      function(status, response) {
+        if (status.error) {
+          console.log(status)
+        }
+        // else {
+        //   displayMessage('[NAME: sent]',
+        //     'timetoken: ' + response.timetoken);
+        // }
+      });
+    };
+
+    displayMessage = function(messageType, aMessage) {
+      let pmessage = document.createElement('p');
+      //let br = document.createElement('br');
+
+      messagesTop.after(pmessage);
+      // pmessage.appendChild(document.createTextNode(messageType));
+      // pmessage.appendChild(br);
+      pmessage.appendChild(document.createTextNode(aMessage));
+    }
+  </script>
 </html>
