@@ -53,9 +53,23 @@ h2 {
   opacity:100%;
 }
 
+.submitted{
+  background-color: #bbf;
+  color: #555;
+  width: 60%;
+  height: auto;
+  margin: 20px auto;
+  padding: 10px 10px;
+  overflow: hidden;
+}
+
+.submitted img{
+  max-width: 30%;
+  height: auto;
+}
 
 #sloth {
-    display: none;
+  display: none;
 }
 
 #zebra{
