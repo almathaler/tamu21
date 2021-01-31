@@ -8,14 +8,14 @@ html, body {
 }
 h1 {
   text-align: center;
-  font-size: 64px;
+  font-size: 48px;
   margin: 10px 10px;
   padding: 10px 10px;
   color: black;
 }
 h2 {
   text-align: center;
-  font-size: 32px;
+  font-size: 28px;
   margin: 10px 10px;
   padding: 10px 10px;
   color: #555;
@@ -44,47 +44,15 @@ h2 {
 }
 
 .avatar_selector img{
-  max-width:30%;
+  max-width:20%;
   height: auto;
   opacity: 60%;
+  margin: 5px auto;
 }
 
 .avatar_selector img:hover{
   opacity:100%;
 }
-
-.submitted{
-  background-color: #bbf;
-  color: #555;
-  width: 60%;
-  height: auto;
-  margin: 20px auto;
-  padding: 10px 10px;
-  overflow: hidden;
-}
-
-.submitted img{
-  max-width: 30%;
-  height: auto;
-  animation: shake 1s linear 0s infinite alternate;
-  will-change: transform;
-  transform-origin: bottom center;
-}
-
-/*Got this from tutorial @ https://www.outsystems.com/blog/posts/from-design-to-code_creating-and-animating-images-with-css/*/
-
-@keyframes shake {
-  0% {
-    transform: rotate(-1deg);
-  }
-  50% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(1deg);
-  }
-}
-
 
 
 #sloth {

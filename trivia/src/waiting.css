@@ -1,0 +1,53 @@
+html, body {
+  font-size: 24px;
+  background-color: white;
+  text-align: center;
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 10px;
+  padding: 0;
+}
+h1 {
+  text-align: center;
+  font-size: 48px;
+  margin: 10px 10px;
+  padding: 10px 10px;
+  color: black;
+}
+h2 {
+  text-align: center;
+  font-size: 28px;
+  margin: 10px 10px;
+  padding: 10px 10px;
+  color: #555;
+}
+.submitted{
+  background-color: #bbf;
+  color: #555;
+  width: 60%;
+  height: auto;
+  margin: 20px auto;
+  padding: 10px 10px;
+  overflow: hidden;
+}
+
+.submitted img{
+  max-width: 30%;
+  height: auto;
+  animation: shake 1s linear 0s infinite alternate;
+  will-change: transform;
+  transform-origin: bottom center;
+}
+
+/*Got this from tutorial @ https://www.outsystems.com/blog/posts/from-design-to-code_creating-and-animating-images-with-css/*/
+
+@keyframes shake {
+  0% {
+    transform: rotate(-1deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(1deg);
+  }
+}

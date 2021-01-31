@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="waiting.css">
+    <title>IceToMeetYou Trivia | Waiting...</title>
+  </head>
+  <body>
+    <div class="submitted">
+      <h1 id="thx"></h1><br>
+      <h2>Waiting for your compatriots...</h2><br>
+      <img src="zebra.png" id="avatar_pic"/>
+    </div>
+    <script>
+      const queryString = window.location.search;
+      console.log(queryString);
+
+      const urlParams = new URLSearchParams(queryString);
+      const name = urlParams.get('name')
+      console.log(name);
+      document.getElementById('thx').innerHTML = "Thank you, " + name + "!";
+
+      const major = urlParams.get('major')
+      console.log(major);
+
+      const from = urlParams.get('from')
+      console.log(from);
+
+      const movie = urlParams.get('movie')
+      console.log(movie);
+
+      const grade = urlParams.get('grade')
+      console.log(grade);
+
+      const avatar = urlParams.get('avatar')
+      console.log(avatar);
+      if (avatar.valueOf() == "sloth"){
+        document.getElementByID('avatar_pic').src = "sloth.png";
+      }
+      if (avatar.valueOf() == "penguin"){
+        document.getElementByID('avatar_pic').src = "penguin.png";
+      }
+
+
+    </script>
+    <div class="joiners">
+    </div>
+  </body>
+</html>
