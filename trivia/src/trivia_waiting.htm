@@ -54,7 +54,7 @@
       </div>
     </div>
     <div class="game" id="game">
-      <button id="next_question" onclick = "onClickNextQ()">Host, Next Question!</a>
+      <button id="next_question" onclick = "onClickNextQ()">Host, I'm Done!</a><br>
     </div>
   </body>
   <!-- pubnub stuff. No messages, just presence -->
@@ -76,7 +76,7 @@
 
     const messagesTop = document.getElementById('joiners');
 
-    const theChannel = 'new530';
+    const theChannel = 'new504';
     const theEntry = 'Earth';
 
     function findUUID() {//checks if comp already has uuid
@@ -104,6 +104,8 @@
       uuid: clientUUID
     });
 
+    let numQ = 0; //number of questions recieved thus far
+
     pubnub.addListener({ //4 types of messages: name, info, hostStart and question
       message: function(event) {
         console.log("recieved a message");
@@ -129,6 +131,7 @@
           sendQuestions(names.length * 2);
         }else if (event.message.entry.valueOf() == "question"){
           console.log("recieved question: " + event.message.question + ", answer: " + event.message.answer);
+          document.getElementById('game').innerHTML+="<label for=\"q"+numQ+"\">"+event.message.question+"</label><input id=\"q"+numQ+"\" type=\"text\" name=\"q"+numQ+"\" required><br>";
         }
       },
       presence: function(event) {
@@ -175,18 +178,22 @@
       }
     };
 
-
-    let nextQuestion = false;
-
-    onClickNextQ = function(){
-      if (host){
-        nextQuestion = true;
-        console.log("host requested next question");
-      }else{
-        console.log("not host, tried onClickNextQ");
-      }
-
+    //submits answers to host; once host has all answers, will notify the winner.
+    submit = function(){
+      //
     }
+
+    // let nextQuestion = false;
+    //
+    // onClickNextQ = function(){
+    //   if (host){
+    //     nextQuestion = true;
+    //     console.log("host requested next question");
+    //   }else{
+    //     console.log("not host, tried onClickNextQ");
+    //   }
+    //
+    // }
     //only works if host. uses data in arrays to make question message packets (1 random data
     //chosen. answer and 2 random names sent)
     sendQuestions = function(numQ){
