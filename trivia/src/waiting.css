@@ -20,58 +20,46 @@ h2 {
   padding: 10px 10px;
   color: #555;
 }
-.form {
-  text-align: left;
+.submitted{
   background-color: #bbf;
   color: #555;
   width: 60%;
+  height: auto;
   margin: 20px auto;
   padding: 10px 10px;
   overflow: hidden;
 }
 
-.form .label{
-  float: right;
-}
-
-.form .input{
-  float: left;
-}
-
-.avatar_selector{
-    width: 80%;
-    margin: 20px auto;
-}
-
-.avatar_selector img{
-  max-width:20%;
+.submitted img{
+  max-width: 30%;
   height: auto;
-  opacity: 60%;
-  margin: 5px auto;
+  animation: shake 1s linear 0s infinite alternate;
+  will-change: transform;
+  transform-origin: bottom center;
 }
 
-.avatar_selector img:hover{
-  opacity:100%;
-}
-
-
-#sloth {
-  display: none;
-}
-
-#zebra{
-  display: none;
-}
-
-#penguin{
-  display: none;
-}
-
-.submit{
+.start_game .start_button{
   text-align: center;
   font-size: 20px;
   padding: 5px;
   background-color: #f00;
   color: white;
   transition: background-color 0.4s;
+}
+/*Got this from tutorial @ https://www.outsystems.com/blog/posts/from-design-to-code_creating-and-animating-images-with-css/*/
+
+.game{
+  display: none;
+}
+
+@keyframes shake {
+  0% {
+    transform: rotate(-1deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(1deg);
+  }
 }
