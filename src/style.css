@@ -1,5 +1,5 @@
 html, body {
-  background-color: white;
+  background-color: #fcc;
   font-family: Arial, Helvetica, sans-serif;
   margin: 0;
   padding: 0;
@@ -7,7 +7,7 @@ html, body {
 
 .game {
   background-color: #bbf;
-  width: 90%;
+  width: 80%;
   margin: 20px auto;
   padding: 10px 10px;
   overflow: hidden;
@@ -38,4 +38,10 @@ html, body {
 
 .game .game_desc button:hover {
   background-color: #f66;
+  cursor: pointer;
+}
+
+#enterName {
+  width: fit-content;
+  margin: 10px auto;
 }

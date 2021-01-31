@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Game Face</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+    </style>
+</head>
+<body>
+  <h3>Fill out this short form so your classmates can learn about you</h3>
+  <form action="reactTest.htm">
+    <input type="hidden" name="game" id="game">
+    <input type="hidden" name="numQs" value="3">
+    <label for="q1">Your actual name</label><br>
+    <input type="text" id="fname" name="q1"><br>
+    <label for="q2">Your major</label><br>
+    <input type="text" id="major" name="q2"><br>
+    <label for="q3">Your favorite hobby</label><br>
+    <input type="text" id="hobby" name="q3"><br>
+    <input type="submit" value="Submit">
+  </form>
+  <script>
+    var url_string = window.location.href;
+    var url = new URL(url_string);
+    var game = document.getElementById("game");
+    game.value = url.searchParams.get("game");
+  </script>
+
+</body>
+</html>

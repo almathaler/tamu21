@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="waiting.css">
+    <title>IceToMeetYou Trivia | Waiting...</title>
+  </head>
+  <body>
+    <div class="waiting" id="waiting">
+      <div class="submitted">
+        <h1 id="thx"></h1><br>
+        <h2>Waiting for your compatriots...</h2><br>
+        <img src="zebra.png" id="avatar_pic"/>
+      </div>
+      <!-- scrapes form info from url -->
+      <script>
+        const queryString = window.location.search;
+        console.log(queryString);
+
+        const urlParams = new URLSearchParams(queryString);
+        const name = urlParams.get('name')
+        console.log(name);
+        document.getElementById('thx').innerHTML = "Thank you, " + name + "!";
+
+        const major = urlParams.get('major')
+        console.log(major);
+
+        const from = urlParams.get('from')
+        console.log(from);
+
+        const movie = urlParams.get('movie')
+        console.log(movie);
+
+        const grade = urlParams.get('grade')
+        console.log(grade);
+
+        const avatar = urlParams.get('avatar')
+        console.log(avatar);
+        if (avatar.valueOf() == "sloth"){
+          document.getElementById('avatar_pic').src = "sloth.png";
+        }
+        if (avatar.valueOf() == "penguin"){
+          document.getElementById('avatar_pic').src = "penguin.png";
+        }
+
+
+      </script>
+      <div class="start_game" id="start_game">
+        <button id="start_button" onclick = "hostStart()">Everyone's Here!</a>
+      </div>
+      <div class="joiners" id="joiners">
+      </div>
+    </div>
+    <div class="game" id="game">
+      <button id="next_question" onclick = "onClickNextQ()">Host, I'm Done!</a><br>
+    </div>
+  </body>
+  <!-- pubnub stuff. No messages, just presence -->
+  <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.27.4.min.js"></script>
+
+  <script>
+    //in this script, scrape data from url and add to array in JS?
+    //once they press "start", display the game. Take note of how many players
+    //when they press start -- don't add questions from new add-ons (though that shouldn't be a problem idt)
+    //set the waiting div to display:none and instead put on the game?
+    let names = [];
+    let majors = [];
+    let froms = [];
+    let grades = [];
+    let movies = [];
+    let avatars = [];
+
+    let host = false;
+
+    const messagesTop = document.getElementById('joiners');
+
+    const theChannel = 'new504';
+    const theEntry = 'Earth';
+
+    function findUUID() {//checks if comp already has uuid
+      var uuid = localStorage.getItem('user_uuid');
+      var channel = localStorage.getItem('channel');
+      if (uuid === null || channel === null || channel.valueOf() != theChannel.valueOf()) {
+        uuid = PubNub.generateUUID();
+        console.log("set uuid", uuid);
+        localStorage.setItem('user_uuid', uuid);
+        localStorage.setItem('channel', theChannel)
+      }else{
+        console.log("uuid already set: ", uuid);
+      }
+      return uuid;
+    }
+
+
+    const clientUUID = findUUID();
+
+
+    const pubnub = new PubNub({
+      // replace the following with your own publish and subscribe keys
+      publishKey: 'pub-c-460f7f1a-94c8-4637-a61a-73822f90499b',
+      subscribeKey: 'sub-c-79b78544-636e-11eb-921d-66294e2030b5',
+      uuid: clientUUID
+    });
+
+    let numQ = 0; //number of questions recieved thus far
+
+    pubnub.addListener({ //4 types of messages: name, info, hostStart and question
+      message: function(event) {
+        console.log("recieved a message");
+        if (event.message.entry.valueOf() == "display" && !names.includes(event.message.update)){
+          displayMessage('[NAME: recieved]', event.message.update);
+        }else if (event.message.entry.valueOf() == "info" && host && !names.includes(event.message.name)){
+          let nameLen = names.push(event.message.name);
+          let majorLen = majors.push(event.message.major);
+          let fromLen = froms.push(event.message.from);
+          let gradeLen = grades.push(event.message.grade);
+          let movieLen = movies.push(event.message.movie);
+          let avatarLen = avatars.push(event.message.avatar);
+          console.log("updated arrays")
+          console.log("values: ", names[nameLen-1], majors[majorLen-1], froms[fromLen-1]);
+        }else if (event.message.entry.valueOf() == "hostStart"){
+          //change visibility of DIVS
+          console.log("recieved hostStart, am I host? ", host);
+          document.getElementById('waiting').style.display = "none";
+          document.getElementById('game').style.display = "initial";
+          // document.getElementById('game').innerHTML = "<p>testing</p>";
+          //now sendQuestions. when was in hostStart function host wasn't updating?
+          console.log("attempting t osend questions...");
+          sendQuestions(names.length * 2);
+        }else if (event.message.entry.valueOf() == "question"){
+          console.log("recieved question: " + event.message.question + ", answer: " + event.message.answer);
+          document.getElementById('game').innerHTML+="<label for=\"q"+numQ+"\">"+event.message.question+"</label><input id=\"q"+numQ+"\" type=\"text\" name=\"q"+numQ+"\" required><br>";
+        }
+      },
+      presence: function(event) {
+        console.log("presence.event: ",event.action);
+        if (event.occupancy == 1){
+          host = true;
+        }
+        console.log("host? ", host);
+        console.log("occupancy: " + event.occupancy);
+        const urlParams = new URLSearchParams(queryString);
+        const name = urlParams.get('name')
+        if (event.action === 'join'){
+          console.log("presence.event is join, submitting name and info: ");
+          submitName("display", name.valueOf());
+          submitInfo("info", name.valueOf(), urlParams.get('major').valueOf(), urlParams.get('grade').valueOf(), urlParams.get('from').valueOf(), urlParams.get('movie').valueOf(), urlParams.get('avatar').valueOf()); //
+        }
+      },
+
+    });
+
+    pubnub.subscribe({
+      channels: [theChannel],
+      withPresence: true
+    });
+
+    hostStart = function(){
+      //only send this out if you're host
+      if (host){
+        console.log("sending out hostStart from host");
+        pubnub.publish({
+          channel : theChannel,
+          message : {'entry' : "hostStart", 'logInfo' : "sent by UUID: " + clientUUID}
+        },
+        function(status, response){
+          if (status.error) {
+            console.log(status);
+          }else{
+            console.log("host start");
+          }
+        });
+
+      }else{
+        console.log("sending hS not from host");
+      }
+    };
+
+    //submits answers to host; once host has all answers, will notify the winner.
+    submit = function(){
+      //
+    }
+
+    // let nextQuestion = false;
+    //
+    // onClickNextQ = function(){
+    //   if (host){
+    //     nextQuestion = true;
+    //     console.log("host requested next question");
+    //   }else{
+    //     console.log("not host, tried onClickNextQ");
+    //   }
+    //
+    // }
+    //only works if host. uses data in arrays to make question message packets (1 random data
+    //chosen. answer and 2 random names sent)
+    sendQuestions = function(numQ){
+      if (host){
+        //should just change when host does 'nextQuestion', i guess
+        for (i = 1; i<= numQ; i++){
+          //nextQuestion = false;
+          console.log("names.length: " + names.length);
+          let index = Math.floor(Math.random() * names.length);
+          console.log("index: " + index);
+          //we can either get a question from major, from, grade, or movie
+          let cat = Math.floor(Math.random() * 3);
+          // answer: names[index], question: ... wrong1: random index wrong2: random index
+          let wrong1 = names[Math.floor(Math.random()*names.length)];
+          let wrong2 = names[Math.floor(Math.random()*names.length)];
+          let answer = names[index];
+          let question = "";
+          if (cat == 0){
+            question = "whose major is " + majors[index].valueOf() + "?";
+          }
+          if (cat == 1){
+            question = "who is from " + froms[index].valueOf() + "?";
+          }
+          if (cat == 2){
+            question = "whose favorite movie is " + movies[index].valueOf() + "?";
+          }
+          submitQuestion("question", question, answer, wrong1, wrong2);
+          // while (!nextQuestion){
+          //   //once host presses nextQuestion, can proceed
+          // }
+        }
+        //now done
+        console.log("done sending questions");
+      }else{
+        console.log("sendQuestions not from host");
+      }
+    };
+
+    submitQuestion = function(anEntry, aQuestion, aAnswer, wrong1, wrong2){
+      pubnub.publish({
+        channel : theChannel,
+        message : {'entry' : anEntry, 'question' : aQuestion, 'answer' : aAnswer, 'wrong1' : wrong1, 'wrong2' : wrong2}
+      },
+      function(status, response) {
+        if (status.error) {
+          console.log(status);
+        }else{
+          console.log("submitted question: ", aQuestion, " answer: ", aAnswer);
+        }
+      });
+    };
+
+    submitName = function(anEntry, aName) {
+      pubnub.publish({
+        channel : theChannel,
+        message : {'entry' : anEntry, 'update' : aName}
+      },
+      function(status, response) {
+        if (status.error) {
+          console.log(status);
+        }else{
+          console.log("published name");
+        }
+      });
+    };
+
+    submitInfo = function(anEntry, name, major, grade, from, movie, avatar){
+      pubnub.publish({
+        channel : theChannel,
+        message : {'entry' : anEntry, 'name' : name, 'major': major, 'grade':grade, 'from':from, 'movie':movie, 'avatar':avatar}
+      },
+      function(status, response) {
+        if (status.error) {
+          console.log(status);
+        }else {
+          console.log("published message with: " +name+ ", " + major + ", " + grade + ", " + from + ", " + movie + ", " + avatar);
+        }
+      });
+    }
+
+    displayMessage = function(messageType, aMessage) {
+      let pmessage = document.createElement('p');
+      //let br = document.createElement('br');
+
+      messagesTop.after(pmessage);
+      // pmessage.appendChild(document.createTextNode(messageType));
+      // pmessage.appendChild(br);
+      pmessage.appendChild(document.createTextNode(aMessage));
+    }
+  </script>
+</html>
