@@ -38,7 +38,7 @@ h2 {
   transform-origin: bottom center;
 }
 
-.submit{
+.start_game .start_button{
   text-align: center;
   font-size: 20px;
   padding: 5px;

@@ -47,10 +47,8 @@
 
 
       </script>
-      <div class="start_game">
-        <form name="start_game" method="GET" action="trivia_game.htm">
-          <button class="submit" id="submit">Everyone's Here!</a>
-        </form>
+      <div class="start_game" id="start_game">
+        <button id="start_button" onclick = "hostStart()">Everyone's Here!</a>
       </div>
       <div class="joiners" id="joiners">
       </div>
@@ -77,7 +75,7 @@
 
     const messagesTop = document.getElementById('joiners');
 
-    const theChannel = 'new120';
+    const theChannel = 'new480';
     const theEntry = 'Earth';
 
     function findUUID() {//checks if comp already has uuid
@@ -119,6 +117,10 @@
           let avatarLen = avatars.push(event.message.avatar);
           console.log("updated arrays")
           console.log("values: ", names[nameLen-1], majors[majorLen-1], froms[fromLen-1]);
+        }else if (event.message.entry.valueOf() == "hostStart"){
+          //change visibility of DIVS
+          document.getElementById('waiting').style.display = "none";
+          document.getElementById('game').innerHTML = "<p>testing</p>";
         }
       },
       presence: function(event) {
@@ -144,6 +146,25 @@
       withPresence: true
     });
 
+    hostStart = function(){
+      //only send this out if you're host
+      if (host){
+        console.log("sending out hostStart from host");
+        pubnub.publish({
+          channel : theChannel,
+          message : {'entry' : "hostStart", 'logInfo' : "sent by UUID: " + clientUUID}
+        },
+        function(status, response){
+          if (status.error) {
+            console.log(status);
+          }else{
+            console.log("host start");
+          }
+        });
+      }else{
+        console.log("sending hS not from host");
+      }
+    };
     submitName = function(anEntry, aName) {
       pubnub.publish({
         channel : theChannel,
@@ -151,7 +172,7 @@
       },
       function(status, response) {
         if (status.error) {
-          console.log(status)
+          console.log(status);
         }else{
           console.log("published name");
         }
@@ -165,7 +186,7 @@
       },
       function(status, response) {
         if (status.error) {
-          console.log(status)
+          console.log(status);
         }else {
           console.log("published message with: " +name+ ", " + major + ", " + grade + ", " + from + ", " + movie + ", " + avatar);
         }
