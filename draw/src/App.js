@@ -1,25 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+import React, { Component } from 'react';
+import * as api from './api'
+// import TextEdit from './components/TextEdit.js';
+class TextEditContainer extends Component {
+  constructor() {
+    super()
+    this.state = {
+      timestamp: 'no timestamp yet',
+      text: ''
+    };
+  }
+componentDidMount() {
+    api.subscribeToTimer((err, timestamp) => this.setState({
+      timestamp
+    }));
+  }
+render() {
+    return (
+      <div>
+        <h2>
+          Here's the TextEditContainer.
+        </h2>
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Time: {this.state.timestamp ? new Date(this.state.timestamp).toLocaleString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+            hour12: true,
+            timeZoneName: 'short'
+          }) : "no date yet"}
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        {/* <TextEdit
+          text={this.state.text}
+        /> */}
     </div>
-  );
+    );
+  }
 }
-
-export default App;
+export default TextEditContainer;
