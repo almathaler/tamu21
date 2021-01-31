@@ -10,7 +10,7 @@
   <body>
     <h1>Tell Us About Yourself!</h1>
     <h2>Your Responses Will Be Your Clues -- Your New Acquaintances Will Have To Deduce They're Yours!</h2>
-      <form action="!!" method="GET"> <!-- action is the uri of what's waiting for the info/can process it  -->
+      <form name="user_info" method="GET" action=""> <!-- action is the uri of what's waiting for the info/can process it  -->
         <div class="form">
           <label for="name">What's Your Name?</label>
           <input id="name" type="text" placeholder="Joann Smith" name="name" required autofocus>
@@ -32,7 +32,47 @@
             <option value="senior">Senior</option>
           </select>
         </div>
-        <button class="submit" id="submit">Take Me To The Game!</a>
+        <br>
+        <div class="avatar_selector">
+          <h2>Choose Your Avatar</h2>
+            <input type="radio" name="avatar" value="sloth" id="sloth"/>
+            <label for="sloth"><img src="sloth.png" alt="sloth" onclick="makeOpaque(this)" id="sloth_pic"/></label>
+
+            <input type="radio" name="avatar" value="zebra" id="zebra" />
+            <label for="zebra"><img src="zebra.png" alt="zebra" onclick="makeOpaque(this)" id="zebra_pic"/></label>
+
+
+            <input type="radio" name="avatar" value="penguin" id="penguin" />
+            <label for="penguin"><img src="penguin.png" alt="penguin" onclick="makeOpaque(this)" id="penguin_pic"/></label>
+
+          <script language = "javascript">
+            function makeOpaque(image){
+              if (image.style.opacity == '1'){
+                image.style.opacity = '.6';
+              }else{ //image wasn't opaque, so we should make what was previously selected light again
+                //j go and make everything 60%?.well One of these will be redundant oh
+                document.getElementById('sloth_pic').style.opacity = '.6';
+                document.getElementById('zebra_pic').style.opacity = '.6';
+                document.getElementById('penguin_pic').style.opacity = '.6';
+                image.style.opacity = '1';
+              }
+            }
+          </script>
+        </div>
+        <br>
+        <button class="submit" id="submit" onclick="displayInput(this.form)">Take Me To The Game!</a>
+        <script type="text/javascript">
+          function displayInput(form){
+            var name=form.name.value;
+            var major=form.major.value;
+            var from=form.from.value;
+            var movie=form.movie.value;
+            var grade=form.grade.value;
+            var avatar=form.avatar.value;
+            document.body.innerHTML = "<div class=\"submitted\"><h1>Thanks, " + name + "!</h1><br><h2>Waiting for your compatriots...</h2><br><img src=\""+avatar+".png\" id=\"avatar_pic\"/></div>";
+
+          }
+        </script>
       </form>
   </body>
 </html>

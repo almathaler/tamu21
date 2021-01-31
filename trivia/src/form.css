@@ -1,5 +1,5 @@
 html, body {
-  text-size: 26px;
+  font-size: 24px;
   background-color: white;
   text-align: center;
   font-family: Arial, Helvetica, sans-serif;
@@ -36,6 +36,67 @@ h2 {
 
 .form .input{
   float: left;
+}
+
+.avatar_selector{
+    width: 80%;
+    margin: 20px auto;
+}
+
+.avatar_selector img{
+  max-width:30%;
+  height: auto;
+  opacity: 60%;
+}
+
+.avatar_selector img:hover{
+  opacity:100%;
+}
+
+.submitted{
+  background-color: #bbf;
+  color: #555;
+  width: 60%;
+  height: auto;
+  margin: 20px auto;
+  padding: 10px 10px;
+  overflow: hidden;
+}
+
+.submitted img{
+  max-width: 30%;
+  height: auto;
+  animation: shake 1s linear 0s infinite alternate;
+  will-change: transform;
+  transform-origin: bottom center;
+}
+
+/*Got this from tutorial @ https://www.outsystems.com/blog/posts/from-design-to-code_creating-and-animating-images-with-css/*/
+
+@keyframes shake {
+  0% {
+    transform: rotate(-1deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(1deg);
+  }
+}
+
+
+
+#sloth {
+  display: none;
+}
+
+#zebra{
+  display: none;
+}
+
+#penguin{
+  display: none;
 }
 
 .submit{
