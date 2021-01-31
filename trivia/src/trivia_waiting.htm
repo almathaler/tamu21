@@ -46,6 +46,11 @@
 
 
     </script>
+    <div class="start_game">
+      <form name="start_game" method="GET" action="trivia_game.htm">
+        <button class="submit" id="submit">Everyone's Here!</a>
+      </form>
+    </div>
     <div class="joiners" id="joiners">
     </div>
   </body>
@@ -68,7 +73,7 @@
 
     pubnub.addListener({
       message: function(event) {
-          displayMessage('[NAME: recieved]', event.message.entry + ': ' + event.message.update);
+          displayMessage('[NAME: recieved]', event.message.update);
       },
       presence: function(event) {
         const urlParams = new URLSearchParams(queryString);
