@@ -48,6 +48,10 @@ h2 {
 }
 /*Got this from tutorial @ https://www.outsystems.com/blog/posts/from-design-to-code_creating-and-animating-images-with-css/*/
 
+.game{
+  display: none;
+}
+
 @keyframes shake {
   0% {
     transform: rotate(-1deg);

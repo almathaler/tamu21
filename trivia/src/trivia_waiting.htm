@@ -54,6 +54,7 @@
       </div>
     </div>
     <div class="game" id="game">
+      <button id="next_question" onclick = "onClickNextQ()">Host, Next Question!</a>
     </div>
   </body>
   <!-- pubnub stuff. No messages, just presence -->
@@ -75,7 +76,7 @@
 
     const messagesTop = document.getElementById('joiners');
 
-    const theChannel = 'new480';
+    const theChannel = 'new530';
     const theEntry = 'Earth';
 
     function findUUID() {//checks if comp already has uuid
@@ -103,7 +104,7 @@
       uuid: clientUUID
     });
 
-    pubnub.addListener({
+    pubnub.addListener({ //4 types of messages: name, info, hostStart and question
       message: function(event) {
         console.log("recieved a message");
         if (event.message.entry.valueOf() == "display" && !names.includes(event.message.update)){
@@ -119,8 +120,15 @@
           console.log("values: ", names[nameLen-1], majors[majorLen-1], froms[fromLen-1]);
         }else if (event.message.entry.valueOf() == "hostStart"){
           //change visibility of DIVS
+          console.log("recieved hostStart, am I host? ", host);
           document.getElementById('waiting').style.display = "none";
-          document.getElementById('game').innerHTML = "<p>testing</p>";
+          document.getElementById('game').style.display = "initial";
+          // document.getElementById('game').innerHTML = "<p>testing</p>";
+          //now sendQuestions. when was in hostStart function host wasn't updating?
+          console.log("attempting t osend questions...");
+          sendQuestions(names.length * 2);
+        }else if (event.message.entry.valueOf() == "question"){
+          console.log("recieved question: " + event.message.question + ", answer: " + event.message.answer);
         }
       },
       presence: function(event) {
@@ -161,10 +169,76 @@
             console.log("host start");
           }
         });
+
       }else{
         console.log("sending hS not from host");
       }
     };
+
+
+    let nextQuestion = false;
+
+    onClickNextQ = function(){
+      if (host){
+        nextQuestion = true;
+        console.log("host requested next question");
+      }else{
+        console.log("not host, tried onClickNextQ");
+      }
+
+    }
+    //only works if host. uses data in arrays to make question message packets (1 random data
+    //chosen. answer and 2 random names sent)
+    sendQuestions = function(numQ){
+      if (host){
+        //should just change when host does 'nextQuestion', i guess
+        for (i = 1; i<= numQ; i++){
+          //nextQuestion = false;
+          console.log("names.length: " + names.length);
+          let index = Math.floor(Math.random() * names.length);
+          console.log("index: " + index);
+          //we can either get a question from major, from, grade, or movie
+          let cat = Math.floor(Math.random() * 3);
+          // answer: names[index], question: ... wrong1: random index wrong2: random index
+          let wrong1 = names[Math.floor(Math.random()*names.length)];
+          let wrong2 = names[Math.floor(Math.random()*names.length)];
+          let answer = names[index];
+          let question = "";
+          if (cat == 0){
+            question = "whose major is " + majors[index].valueOf() + "?";
+          }
+          if (cat == 1){
+            question = "who is from " + froms[index].valueOf() + "?";
+          }
+          if (cat == 2){
+            question = "whose favorite movie is " + movies[index].valueOf() + "?";
+          }
+          submitQuestion("question", question, answer, wrong1, wrong2);
+          // while (!nextQuestion){
+          //   //once host presses nextQuestion, can proceed
+          // }
+        }
+        //now done
+        console.log("done sending questions");
+      }else{
+        console.log("sendQuestions not from host");
+      }
+    };
+
+    submitQuestion = function(anEntry, aQuestion, aAnswer, wrong1, wrong2){
+      pubnub.publish({
+        channel : theChannel,
+        message : {'entry' : anEntry, 'question' : aQuestion, 'answer' : aAnswer, 'wrong1' : wrong1, 'wrong2' : wrong2}
+      },
+      function(status, response) {
+        if (status.error) {
+          console.log(status);
+        }else{
+          console.log("submitted question: ", aQuestion, " answer: ", aAnswer);
+        }
+      });
+    };
+
     submitName = function(anEntry, aName) {
       pubnub.publish({
         channel : theChannel,
