@@ -1,6 +1,6 @@
 'use strict';
 
-const GAME_CHANNEL = "game1";
+const GAME_CHANNEL = "game2";
 var numAnswers = 3;
 var numPeople = 5;
 var myAnswers = [];
@@ -145,15 +145,15 @@ class MatchBoard extends React.Component {
     }
 
     var element;
-    if (isHost) {
+    //if (isHost) {
       element = <StartButton onClick={() => {
         console.log(3);
         sendStart();
         this.start(this);
       }} display={this.state.button_display}/>;
-    } else {
-      element = <Waiting display={this.state.button_display}/>;
-    }
+    //} else {
+    //  element = <Waiting display={this.state.button_display}/>;
+    //}
 
     return (
       <div className="board_holder">

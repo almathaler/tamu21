@@ -1,5 +1,5 @@
-const CHAT_CHANNEL = "chat1";
-const CONTROL_CHANNEL = "control1";
+const CHAT_CHANNEL = "chat2";
+const CONTROL_CHANNEL = "control2";
 const UUID_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const numPlayersText = document.getElementById("numPlayers");
 var messagesTop = document.getElementById("last_message");
